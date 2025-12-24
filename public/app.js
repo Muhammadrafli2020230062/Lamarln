@@ -208,23 +208,10 @@ async function downloadPdf() {
         setSaveIndicator('Menyiapkan PDF...', 'muted');
         setPdfFallbackLink(null);
         const safeName = (state.lastPayload?.personal?.full_name || 'cv-builder').replace(/[^a-z0-9\-]+/gi, '-');
-        let downloaded = false;
-
-        try {
+        const downloaded = await tryServerPdfDownload(safeName);
+        if (!downloaded) {
             await downloadPdfFromPreview(`${safeName}.pdf`);
-            downloaded = true;
-        } catch (error) {
-            console.warn('Gagal membuat PDF dari preview, coba server.', error);
         }
-
-        if (!downloaded) {
-            downloaded = await tryServerPdfDownload(safeName);
-        }
-
-        if (!downloaded) {
-            throw new Error('Gagal membuat PDF');
-        }
-
         setSaveIndicator('PDF berhasil dibuat', 'success');
     } catch (error) {
         console.error(error);
@@ -309,7 +296,7 @@ async function downloadPdfFromPreview(filename) {
         margin: 0,
         filename,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['avoid-all'] }
     };
@@ -318,8 +305,11 @@ async function downloadPdfFromPreview(filename) {
     sandbox.style.position = 'fixed';
     sandbox.style.left = '-10000px';
     sandbox.style.top = '0';
-    sandbox.style.width = 'auto';
+    sandbox.style.width = '210mm';
+    sandbox.style.margin = '0';
+    sandbox.style.padding = '0';
     const clone = target.cloneNode(true);
+    clone.style.margin = '0';
     sandbox.appendChild(clone);
     document.body.appendChild(sandbox);
 
