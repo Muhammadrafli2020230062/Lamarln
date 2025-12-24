@@ -221,7 +221,10 @@ async function tryServerPdfDownload(fileBaseName) {
     try {
         const response = await fetch('/api/cv/pdf');
         if (!response.ok) return false;
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.toLowerCase().includes('application/pdf')) return false;
         const blob = await response.blob();
+        if (!blob || !blob.size) return false;
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -238,9 +241,22 @@ async function tryServerPdfDownload(fileBaseName) {
 }
 
 async function downloadPdfFromPreview(filename) {
-    const target = document.querySelector('#preview-canvas .cv-page');
+    let target = document.querySelector('#preview-canvas .cv-page');
+    if (!target) {
+        const fallback = collectFormData();
+        renderPreview(fallback);
+        target = document.querySelector('#preview-canvas .cv-page');
+    }
     if (!target) {
         throw new Error('Preview tidak ditemukan');
+    }
+
+    if (document.fonts && document.fonts.ready) {
+        try {
+            await document.fonts.ready;
+        } catch (error) {
+            console.warn('Gagal memuat font sebelum unduh.', error);
+        }
     }
     if (typeof window.html2pdf !== 'function') {
         throw new Error('html2pdf tidak tersedia');
@@ -255,7 +271,20 @@ async function downloadPdfFromPreview(filename) {
         pagebreak: { mode: ['avoid-all'] }
     };
 
-    await window.html2pdf().set(options).from(target).save();
+    const sandbox = document.createElement('div');
+    sandbox.style.position = 'fixed';
+    sandbox.style.left = '-10000px';
+    sandbox.style.top = '0';
+    sandbox.style.width = 'auto';
+    const clone = target.cloneNode(true);
+    sandbox.appendChild(clone);
+    document.body.appendChild(sandbox);
+
+    try {
+        await window.html2pdf().set(options).from(clone).save();
+    } finally {
+        sandbox.remove();
+    }
 }
 
 async function loadInitialData() {
@@ -268,7 +297,10 @@ async function loadInitialData() {
         setSaveIndicator('Semua perubahan tersimpan', 'success');
     } catch (error) {
         console.error('Gagal memuat data:', error);
-        setSaveIndicator('Gagal memuat data awal', 'error');
+        const fallback = collectFormData();
+        renderPreview(fallback);
+        state.lastPayload = fallback;
+        setSaveIndicator('Mode offline: data tidak tersimpan', 'error');
     }
 }
 
