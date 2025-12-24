@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surat Lamaran Kerja - LamarIn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body { font-family: 'Fredoka', 'Inter', sans-serif; }
+        @media print {
+            @page { size: A4; margin: 0; }
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 40px 60px !important;
+                margin: 0 !important;
+            }
+            .no-print { display: none !important; }
+        }
+        .donate-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            backdrop-filter: blur(2px);
+        }
+        .donate-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .donate-dialog {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px;
+            width: min(420px, 90vw);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+        }
+        .donate-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #be1e2d;
+            background: #fef2f2;
+            padding: 6px 10px;
+            border-radius: 9999px;
+            border: 1px solid #fecdd3;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
+    <div class="max-w-7xl mx-auto">
+        <nav class="mb-6 flex flex-wrap items-center justify-between gap-3 text-sm font-semibold text-slate-600 no-print">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm border border-emerald-900/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-7 h-7">
+                        <polygon points="86,32 136,86 136,168 86,118" fill="#064E3B"/>
+                        <polygon points="86,118 136,168 86,206 36,156" fill="#0A6B52" opacity="0.9"/>
+                        <polygon points="124,96 188,60 220,92 156,128" fill="#10B981"/>
+                        <polygon points="156,128 220,92 220,196 156,232" fill="#0EA371" opacity="0.92"/>
+                        <polygon points="116,140 152,120 176,144 140,164" fill="#F7F5EF" opacity="1"/>
+                    </svg>
+                </div>
+                <span class="text-2xl font-black tracking-tighter">Lamar<span class="text-[#10B981]">In</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-2">
+                <a href="/" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">Home</a>
+                <a href="/index.html" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">CV Builder</a>
+                <a href="/merge-pdf.html" class="px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">Merger PDF</a>
+                <a href="/surat-lamaran.html" class="px-3 py-2 rounded-lg bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition">Surat Lamaran</a>
+            </div>
+            <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-surat-menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </nav>
+        <div id="nav-surat-menu" class="md:hidden mb-6 space-y-2 hidden">
+            <a href="/" class="block px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">Home</a>
+            <a href="/index.html" class="block px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">CV Builder</a>
+            <a href="/merge-pdf.html" class="block px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-emerald-200 hover:text-emerald-700 transition">Merger PDF</a>
+            <a href="/surat-lamaran.html" class="block px-3 py-2 rounded-lg bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 transition">Surat Lamaran</a>
+        </div>
+        <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Surat Lamaran Kerja</h1>
+                <p class="text-slate-500 font-medium">Buat dan simpan surat lamaran kerja profesional Anda.</p>
+            </div>
+            <button id="btn-print" class="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 active:scale-95">
+                <span>Unduh Surat Sekarang (PDF)</span>
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <!-- Form -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] no-print">
+                <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        Konfigurasi Surat
+                    </h2>
+                </div>
+                <div class="p-6 overflow-y-auto space-y-8" id="form-area">
+                    <!-- Informasi dasar -->
+                    <section class="space-y-4">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Informasi Dasar</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-semibold text-slate-700">Kota Asal</label>
+                                <input data-field="kotaAsal" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-semibold text-slate-700">Tanggal Surat</label>
+                                <input data-field="tanggalSurat" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Lowongan -->
+                    <section class="space-y-4 pt-4 border-t border-slate-100">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Informasi Lowongan</h3>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Nama Perusahaan</label>
+                                    <input data-field="perusahaan" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Nama Penerima/HRD</label>
+                                    <input data-field="penerima" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: HRD Manager" />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-semibold text-slate-700">Alamat Perusahaan</label>
+                                <textarea data-field="alamatPerusahaan" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Sumber Info</label>
+                                    <input data-field="sumberInfo" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: Jobstreet" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Posisi Dilamar</label>
+                                    <input data-field="posisi" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Profil pelamar -->
+                    <section class="space-y-4 pt-4 border-t border-slate-100">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Profil Pelamar</h3>
+                        <div class="space-y-4">
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-semibold text-slate-700">Nama Lengkap</label>
+                                <input data-field="namaLengkap" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Jenis Kelamin</label>
+                                    <select data-field="jenisKelamin" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">No. HP</label>
+                                    <input data-field="nomorHandphone" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Tempat Lahir</label>
+                                    <input data-field="tempatLahir" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-slate-700">Tanggal Lahir</label>
+                                    <input data-field="tanggalLahir" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Tgl bln thn" />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-sm font-semibold text-slate-700">Alamat Domisili</label>
+                                <textarea data-field="alamat" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Lampiran -->
+                    <section class="space-y-4 pt-4 border-t border-slate-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Lampiran</h3>
+                            <button id="add-lampiran" class="text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg transition-colors">
+                                Tambah
+                            </button>
+                        </div>
+                        <div id="lampiran-list" class="space-y-3"></div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="sticky top-8">
+                <div class="bg-white px-10 md:px-12 py-8 md:py-10 shadow-2xl rounded-sm border border-slate-100 overflow-y-auto relative text-[15px]" id="printable-area">
+                    <div class="text-right mb-12 text-slate-900">
+                        <p id="pv-kota-tanggal"></p>
+                    </div>
+
+                    <div class="mb-10 text-slate-900">
+                        <p class="font-bold">Perihal: Lamaran Pekerjaan</p>
+                    </div>
+
+                    <div class="mb-12 text-slate-900 leading-snug">
+                        <p>Kepada Yth,</p>
+                        <p class="font-bold" id="pv-penerima"></p>
+                        <p class="font-bold uppercase" id="pv-perusahaan"></p>
+                        <p class="max-w-[300px] mt-1" id="pv-alamat-perusahaan"></p>
+                    </div>
+
+                    <div class="mb-8 leading-relaxed text-slate-900">
+                        <p class="mb-4">Dengan hormat,</p>
+                        <p id="pv-paragraf1" style="text-align: justify;"></p>
+                    </div>
+
+                    <div class="mb-10 ml-6 space-y-1 text-slate-900" id="pv-data-diri"></div>
+
+                    <div class="mb-10 leading-relaxed text-slate-900">
+                        <p class="mb-4">Bermaksud untuk melamar posisi tersebut di atas. Sebagai bahan pertimbangan Bapak/Ibu, saya lampirkan dokumen pendukung sebagai berikut:</p>
+                        <div class="ml-8 space-y-1" id="pv-lampiran"></div>
+                    </div>
+
+                    <div class="mb-10 leading-relaxed text-slate-900">
+                        <p>Demikian surat lamaran ini saya sampaikan, besar harapan saya untuk dapat mengikuti tahapan selanjutnya. Atas perhatian Bapak/Ibu, saya ucapkan terima kasih.</p>
+                    </div>
+
+                    <div class="flex justify-end pr-8 text-slate-900">
+                        <div class="text-center min-w-[200px]">
+                            <p class="mb-16">Hormat saya,</p>
+                            <p class="font-bold border-b border-slate-900 pb-1 uppercase" id="pv-nama-tanda-tangan"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            kotaAsal: 'Karawang',
+            tanggalSurat: '12 Oktober 2022',
+            perusahaan: 'PT. Angin Mamiri',
+            penerima: 'HRD Manager',
+            alamatPerusahaan: 'Jl. Kaktus 30 No. 1, Karawang Barat',
+            sumberInfo: 'situs Jobstreet',
+            posisi: 'Operator Produksi',
+            namaLengkap: 'Mamaris',
+            jenisKelamin: 'Laki-laki',
+            tempatLahir: 'Samarinda',
+            tanggalLahir: '23 November 1990',
+            alamat: 'Jl. Pepaya No. 27, Karawang Barat',
+            nomorHandphone: '086575647367',
+            lampiran: ['Fotokopi KTP', 'Fotokopi Ijazah', 'Fotokopi SKCK', 'Pas foto 3x4']
+        };
+
+        let donationResolve = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            bindInputs();
+            renderLampiran();
+            renderPreview();
+            setupDonationModal();
+            document.querySelectorAll('[data-menu-toggle]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-menu-toggle');
+                    const menu = document.getElementById(targetId);
+                    if (!menu) return;
+                    menu.classList.toggle('hidden');
+                });
+            });
+
+            document.getElementById('btn-print').addEventListener('click', handlePrint);
+            document.getElementById('add-lampiran').addEventListener('click', addLampiran);
+        });
+
+        async function handlePrint() {
+            const donateUrl = 'https://trakteer.id/muhrafli13/tip';
+            const choice = await showDonationPrompt();
+            if (choice === 'donate') {
+                window.open(donateUrl, '_blank', 'noopener');
+            }
+            const target = document.getElementById('printable-area');
+            if (!target) return;
+            const options = {
+                margin: 5,
+                filename: 'surat-lamaran.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all'] }
+            };
+            if (window.html2pdf) {
+                await html2pdf().set(options).from(target).save();
+            } else {
+                window.print();
+            }
+        }
+
+        function bindInputs() {
+            document.querySelectorAll('[data-field]').forEach((el) => {
+                const key = el.getAttribute('data-field');
+                el.value = state[key] || '';
+                el.addEventListener('input', (e) => {
+                    state[key] = e.target.value;
+                    renderPreview();
+                });
+            });
+        }
+
+        function renderLampiran() {
+            const list = document.getElementById('lampiran-list');
+            list.innerHTML = '';
+            state.lampiran.forEach((item, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex items-center gap-2';
+                const input = document.createElement('input');
+                input.className = 'flex-1 px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none';
+                input.value = item;
+                input.placeholder = `Lampiran ${index + 1}`;
+                input.addEventListener('input', (e) => {
+                    state.lampiran[index] = e.target.value;
+                    renderPreview();
+                });
+                const btn = document.createElement('button');
+                btn.className = `p-2 text-slate-300 hover:text-red-500 transition-colors ${state.lampiran.length === 1 ? 'invisible' : ''}`;
+                btn.innerHTML = '✕';
+                btn.addEventListener('click', () => removeLampiran(index));
+                wrapper.appendChild(input);
+                wrapper.appendChild(btn);
+                list.appendChild(wrapper);
+            });
+        }
+
+        function addLampiran() {
+            state.lampiran.push('');
+            renderLampiran();
+            renderPreview();
+        }
+
+        function removeLampiran(index) {
+            if (state.lampiran.length === 1) return;
+            state.lampiran.splice(index, 1);
+            renderLampiran();
+            renderPreview();
+        }
+
+        function renderPreview() {
+            document.getElementById('pv-kota-tanggal').textContent = `${state.kotaAsal}, ${state.tanggalSurat}`;
+            document.getElementById('pv-penerima').textContent = state.penerima || '-';
+            document.getElementById('pv-perusahaan').textContent = state.perusahaan || '-';
+            document.getElementById('pv-alamat-perusahaan').textContent = state.alamatPerusahaan || '-';
+
+            const paragraf1 = `Sehubungan dengan informasi lowongan kerja yang saya peroleh melalui ${state.sumberInfo || '-'}, saya mengetahui bahwa ${state.perusahaan || '-'} sedang membuka kesempatan berkarir untuk posisi ${state.posisi || '-'}.
+            Maka dari itu, saya yang bertanda tangan di bawah ini:`;
+            document.getElementById('pv-paragraf1').textContent = paragraf1;
+
+            const dataDiri = [
+                ['Nama Lengkap', state.namaLengkap || '-'],
+                ['Jenis Kelamin', state.jenisKelamin || '-'],
+                ['Tempat/Tgl Lahir', `${state.tempatLahir || '-'}, ${state.tanggalLahir || '-'}`],
+                ['Alamat Domisili', state.alamat || '-'],
+                ['Nomor handphone', state.nomorHandphone || '-']
+            ];
+            const dataDiriWrap = document.getElementById('pv-data-diri');
+            dataDiriWrap.innerHTML = dataDiri
+                .map(
+                    ([label, val]) =>
+                        `<div class="grid grid-cols-[160px_15px_1fr]"><p>${label}</p><p>:</p><p class="leading-tight">${val}</p></div>`
+                )
+                .join('');
+
+            const lampiranWrap = document.getElementById('pv-lampiran');
+            lampiranWrap.innerHTML = state.lampiran
+                .map((item, idx) => `<div class="flex items-start gap-2"><span>${idx + 1}.</span><span>${item || '(Belum diisi)'}</span></div>`)
+                .join('');
+
+            document.getElementById('pv-nama-tanda-tangan').textContent = state.namaLengkap || '';
+        }
+
+        function setupDonationModal() {
+            const modal = document.getElementById('donate-modal');
+            const cta = document.getElementById('donate-cta');
+            const skip = document.getElementById('donate-skip');
+            const close = document.getElementById('donate-close');
+            if (!modal || !cta || !skip || !close) return;
+
+            const finish = (choice) => {
+                modal.classList.add('hidden');
+                const resolver = donationResolve;
+                donationResolve = null;
+                if (resolver) resolver(choice);
+            };
+
+            cta.addEventListener('click', () => finish('donate'));
+            skip.addEventListener('click', () => finish('skip'));
+            close.addEventListener('click', () => finish('skip'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) finish('skip');
+            });
+        }
+
+        function showDonationPrompt() {
+            const modal = document.getElementById('donate-modal');
+            return new Promise((resolve) => {
+                if (!modal) return resolve('skip');
+                donationResolve = resolve;
+                modal.classList.remove('hidden');
+            });
+        }
+    </script>
+    <div id="donate-modal" class="donate-overlay hidden no-print">
+        <div class="donate-dialog">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="donate-badge">☕ Trakteer</span>
+                <button id="donate-close" class="ml-auto text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Dukung sebelum unduh?</h3>
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                Satu cendolmu bisa bantu website ini terus hidup. Makasih banyak!
+            </p>
+            <div class="flex gap-3">
+                <button id="donate-cta" class="flex-1 py-2.5 px-4 bg-[#be1e2d] text-white font-semibold rounded-lg shadow hover:bg-[#a41a27] transition">
+                    Buka Trakteer
+                </button>
+                <button id="donate-skip" class="flex-1 py-2.5 px-4 border border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition">
+                    Nanti saja
+                </button>
+            </div>
+        </div>
+    </div>
+    <footer class="mt-8 text-center text-sm text-slate-500 no-print">
+        © 2025 by Muhammad Rafli
+    </footer>
+</body>
+</html>
+

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LamarIn - CV Builder ATS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --accent-color: #10b981;
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+        }
+        body {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sidebar {
+            scrollbar-width: none;
+        }
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+        #preview-shell {
+            display: flex;
+            justify-content: center;
+        }
+        #preview-canvas {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .cv-page {
+            width: var(--a4-width);
+            min-height: var(--a4-height);
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 15mm 18mm;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            color: #1a202c;
+            line-height: 1.4;
+        }
+        .cv-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .cv-page h1 {
+            letter-spacing: -0.01em;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .cv-page h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #1a202c;
+            margin-top: 1.25rem;
+        }
+        .cv-page hr {
+            border: 0;
+            border-top: 1px solid #1a202c;
+            margin: 0.2rem 0 0.8rem 0;
+        }
+        .item-header,
+        .item-sub {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            column-gap: 0.75rem;
+            align-items: start;
+        }
+        .item-header {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 0.6rem;
+        }
+        .item-sub {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+        }
+        .item-header span:first-child,
+        .item-sub span:first-child {
+            min-width: 0;
+        }
+        .item-header span:last-child,
+        .item-sub span:last-child {
+            text-align: right;
+            white-space: nowrap;
+        }
+        .cv-page ul {
+            list-style-type: disc;
+            margin-left: 1.15rem;
+            margin-top: 0.2rem;
+        }
+        .cv-page li {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 0.2rem;
+            text-align: left;
+            color: #1a202c;
+        }
+        .contact-line {
+            font-size: 0.85rem;
+            color: #1a202c;
+            margin-top: 0.25rem;
+        }
+        .cv-contact-links {
+            font-weight: 500;
+        }
+        .cv-link {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+        .summary-text {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .cv-block {
+            margin-bottom: 1rem;
+        }
+        .cv-skill-list {
+            font-size: 0.875rem;
+            display: grid;
+            gap: 0.4rem;
+        }
+        .cv-skill-label {
+            font-weight: 700;
+        }
+        .cv-empty {
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+        .cv-italic {
+            font-style: italic;
+        }
+        .cv-preview { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); background-color: white; min-height: 80vh; }
+        .template-card { border: 2px solid transparent; transition: border-color 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; gap: 6px; height: 100%; justify-content: center; }
+        .template-card.active { border-color: var(--accent-color); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1); }
+        .accent-swatch.active { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1); }
+        .form-step { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 14px; padding: 16px; }
+        .stepper { display: grid; gap: 10px; }
+        .step-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 12px; background: #f8fafc; transition: all 0.2s ease; text-align: left; width: 100%; }
+        .step-item:hover { border-color: #bfdbfe; background: #eff6ff; }
+        .step-circle { width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; color: #0f172a; background: #fff; }
+        .step-active { border-color: #2563eb !important; background: #eff6ff !important; color: #0f172a !important; }
+        .step-active .step-circle { background: #2563eb; color: #fff; border-color: #2563eb; }
+        @media (max-width: 900px) { .cv-page { width: 100%; min-height: auto; padding: 32px 24px; } }
+        @media (max-width: 768px) { #preview-shell { min-height: auto; } }
+        @media print {
+            body { background: none; margin: 0; padding: 0; }
+            .cv-page { padding: 10mm 15mm; width: 100%; }
+        }
+        .donate-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            backdrop-filter: blur(2px);
+        }
+        .donate-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .donate-dialog {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px;
+            width: min(420px, 90vw);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+        }
+        .donate-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #be1e2d;
+            background: #fef2f2;
+            padding: 6px 10px;
+            border-radius: 9999px;
+            border: 1px solid #fecdd3;
+        }
+    </style>
+</head>
+<body class="antialiased bg-slate-100">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm border border-emerald-900/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-7 h-7">
+                        <polygon points="86,32 136,86 136,168 86,118" fill="#064E3B"/>
+                        <polygon points="86,118 136,168 86,206 36,156" fill="#0A6B52" opacity="0.9"/>
+                        <polygon points="124,96 188,60 220,92 156,128" fill="#10B981"/>
+                        <polygon points="156,128 220,92 220,196 156,232" fill="#0EA371" opacity="0.92"/>
+                        <polygon points="116,140 152,120 176,144 140,164" fill="#F7F5EF" opacity="1"/>
+                    </svg>
+                </div>
+                <span class="text-2xl font-black tracking-tighter">Lamar<span class="text-[#10B981]">In</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/" class="py-2 px-4 rounded-lg text-slate-700 font-semibold border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">
+                    Home
+                </a>
+                <a href="/merge-pdf.html" class="py-2 px-4 rounded-lg text-slate-700 font-semibold border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">
+                    Merger PDF
+                </a>
+                <a href="/surat-lamaran.html" class="py-2 px-4 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition inline-block">
+                    Surat Lamaran Kerja
+                </a>
+            </div>
+            <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-index-menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+        <div id="nav-index-menu" class="md:hidden px-4 sm:px-6 lg:px-8 py-3 space-y-2 border-t border-slate-200 hidden">
+            <a href="/" class="block py-2 px-3 rounded-lg text-slate-700 font-semibold border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 transition">Home</a>
+            <a href="/merge-pdf.html" class="block py-2 px-3 rounded-lg text-slate-700 font-semibold border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 transition">Merger PDF</a>
+            <a href="/surat-lamaran.html" class="block py-2 px-3 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition">Surat Lamaran Kerja</a>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-8">
+            <div>
+                <p class="text-xs font-bold text-emerald-700 uppercase tracking-[0.2em]">LamarIn</p>
+                <h1 class="text-3xl font-extrabold text-slate-900 mt-1">Bangun CV ATS Profesional bersama LamarIn</h1>
+                <p class="text-sm text-slate-500 mt-1">Ikuti langkah-langkah, lihat preview A4, lalu unduh PDF.</p>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+                <span id="save-indicator" class="text-sm text-gray-500 hidden">Perubahan otomatis tersimpan</span>
+                <div id="trakteer-btn"></div>
+                <script type="text/javascript" src="https://edge-cdn.trakteer.id/js/embed/trbtn.min.js?v=14-05-2025"></script>
+                <script type="text/javascript">
+                    (function () {
+                        var trbtnId = trbtn.init(
+                            'Dukung Saya di Trakteer',
+                            '#be1e2d',
+                            'https://trakteer.id/muhrafli13/tip',
+                            'https://trakteer.id/images/mix/coffee.png',
+                            '50'
+                        );
+                        trbtn.draw(trbtnId);
+                    })();
+                </script>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-[520px_minmax(0,1fr)] gap-6 items-start">
+            <section id="editor-sidebar" class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+                <div class="bg-emerald-900 text-white px-6 py-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-semibold">Mode Penyuntingan</p>
+                        <p class="text-xs text-emerald-200 uppercase tracking-widest">Formulir langkah demi langkah</p>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-900 bg-white px-3 py-1 rounded-full shadow-sm">Real-time</span>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="stepper">
+                        <button class="step-item step-active" data-step="1">
+                            <span class="step-circle">1</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Detail Pribadi / Kontak</p>
+                                <p class="text-xs text-slate-500">Nama, email, telepon, lokasi</p>
+                            </div>
+                        </button>
+                        <button class="step-item" data-step="2">
+                            <span class="step-circle">2</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Profil Profesional</p>
+                                <p class="text-xs text-slate-500">Nama jabatan & ringkasan</p>
+                            </div>
+                        </button>
+                        <button class="step-item" data-step="3">
+                            <span class="step-circle">3</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Pengalaman Kerja</p>
+                                <p class="text-xs text-slate-500">Pekerjaan, periode, pencapaian</p>
+                            </div>
+                        </button>
+                        <button class="step-item" data-step="4">
+                            <span class="step-circle">4</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Riwayat Pendidikan</p>
+                                <p class="text-xs text-slate-500">Gelar, institusi, IPK</p>
+                            </div>
+                        </button>
+                        <button class="step-item" data-step="5">
+                            <span class="step-circle">5</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Keterampilan & Sertifikasi</p>
+                                <p class="text-xs text-slate-500">Teknis, lunak, bahasa, sertifikasi</p>
+                            </div>
+                        </button>
+                        <button class="step-item" data-step="6">
+                            <span class="step-circle">6</span>
+                            <div class="text-left">
+                                <p class="text-sm font-semibold text-slate-900">Finalisasi & Unduh</p>
+                                <p class="text-xs text-slate-500">Unduh PDF siap kirim</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div id="form-step-1" class="form-step">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">1. Detail Pribadi / Kontak</h3>
+                            <div class="space-y-4" data-sync-group="personal">
+                                <div>
+                                    <label for="full_name" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Nama Lengkap</label>
+                                    <input type="text" id="full_name" placeholder="John Doe" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Email</label>
+                                    <input type="email" id="email" placeholder="john.doe@example.com" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="phone" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Nomor Telepon</label>
+                                        <input type="text" id="phone" placeholder="+62 812 3456 7890" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                    </div>
+                                    <div>
+                                        <label for="address" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Alamat (Kota, Provinsi)</label>
+                                        <input type="text" id="address" placeholder="Jakarta, DKI Jakarta" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="linkedin" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">LinkedIn</label>
+                                        <input type="text" id="linkedin" placeholder="linkedin.com/in/username" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                    </div>
+                                    <div>
+                                        <label for="portfolio" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Portfolio</label>
+                                        <input type="text" id="portfolio" placeholder="portfolio-link.com" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mt-6">
+                                <button class="py-3 px-4 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(2)">Lanjut ke Profil</button>
+                            </div>
+                        </div>
+
+                        <div id="form-step-2" class="form-step hidden">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">2. Profil Profesional</h3>
+                            <p class="text-gray-600 mb-4 text-sm">Masukkan nama jabatan dan ringkasan singkat sesuai format ATS.</p>
+                            <label for="title" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Nama Jabatan</label>
+                            <input type="text" id="title" placeholder="Contoh: Senior Front-End Developer" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm" />
+                            <label for="summary" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mt-4">Ringkasan Profesional</label>
+                            <textarea id="summary" rows="5" placeholder="Tuliskan 3-5 kalimat tentang pengalaman, spesialisasi, dan nilai utama Anda." class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm"></textarea>
+                            <div class="flex gap-3 mt-6">
+                                <button class="w-1/2 py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(1)">Kembali</button>
+                                <button class="w-1/2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition duration-150" onclick="nextStep(3)">Lanjut ke Pengalaman</button>
+                            </div>
+                        </div>
+
+                        <div id="form-step-3" class="form-step hidden">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">3. Pengalaman Kerja</h3>
+                            <p class="text-gray-600 mb-4 text-sm">Tambahkan riwayat pekerjaan Anda, mulai dari yang terbaru.</p>
+                            <div id="experience-forms" class="space-y-4"></div>
+                            <button type="button" data-add-entry="experience" class="w-full py-3 px-4 border-2 border-dashed border-emerald-200 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition duration-150">+ Tambah Pengalaman</button>
+                            <div class="flex gap-3 mt-4">
+                                <button class="w-1/2 py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(2)">Kembali</button>
+                                <button class="w-1/2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition duration-150" onclick="nextStep(4)">Lanjut ke Pendidikan</button>
+                            </div>
+                        </div>
+
+                        <div id="form-step-4" class="form-step hidden">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">4. Riwayat Pendidikan</h3>
+                            <p class="text-gray-600 mb-4 text-sm">Tambahkan riwayat pendidikan formal Anda.</p>
+                            <div id="education-forms" class="space-y-4"></div>
+                            <button type="button" data-add-entry="education" class="w-full py-3 px-4 border-2 border-dashed border-emerald-200 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition duration-150">+ Tambah Pendidikan</button>
+                            <div class="flex gap-3 mt-4">
+                                <button class="w-1/2 py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(3)">Kembali</button>
+                                <button class="w-1/2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition duration-150" onclick="nextStep(5)">Lanjut ke Keterampilan</button>
+                            </div>
+                        </div>
+
+                        <div id="form-step-5" class="form-step hidden">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">5. Keterampilan, Bahasa & Sertifikasi</h3>
+                            <p class="text-gray-600 mb-4 text-sm">Pisahkan item dengan koma atau baris baru.</p>
+                            <label for="skills" class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Keahlian Teknis</label>
+                            <textarea id="skills" rows="3" placeholder="Contoh: SQL, Excel, Power BI, Python" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm"></textarea>
+                            <label for="soft_skills" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mt-4">Keahlian Lunak</label>
+                            <textarea id="soft_skills" rows="2" placeholder="Contoh: Manajemen Proyek, Komunikasi, Negosiasi" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm"></textarea>
+                            <label for="languages" class="block text-xs font-bold text-gray-600 uppercase tracking-wide mt-4">Bahasa</label>
+                            <textarea id="languages" rows="2" placeholder="Contoh: Indonesia (Native), Inggris (Professional)" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-3 border text-sm"></textarea>
+                            <div class="mt-5 space-y-3">
+                                <p class="text-xs font-bold text-gray-600 uppercase tracking-wide">Sertifikasi & Kursus</p>
+                                <div id="certification-forms" class="space-y-4"></div>
+                                <button type="button" data-add-entry="certification" class="w-full py-3 px-4 border-2 border-dashed border-emerald-200 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition duration-150">+ Tambah Sertifikasi/Kursus</button>
+                            </div>
+                            <div class="flex gap-3 mt-6">
+                                <button class="w-1/2 py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(4)">Kembali</button>
+                                <button class="w-1/2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition duration-150" onclick="nextStep(6)">Lanjut ke Finalisasi</button>
+                            </div>
+                        </div>
+
+                        <div id="form-step-6" class="form-step hidden">
+                            <h3 class="text-lg font-bold mb-4 text-slate-900">6. Finalisasi & Unduh</h3>
+                            <p class="text-gray-600 mb-4 text-sm">CV Anda sudah siap! Klik unduh untuk mendapatkan PDF.</p>
+                            <div class="flex flex-col gap-3">
+                                <button class="py-2 px-4 border border-gray-200 rounded-lg shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition duration-150" onclick="nextStep(5)">Kembali</button>
+                                <button id="download-pdf-btn" type="button" class="py-3 px-4 border border-transparent rounded-lg shadow-lg text-base font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition duration-150">Unduh CV (PDF)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="w-full flex-1 flex flex-col gap-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 px-4 py-3 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Preview CV A4</p>
+                        <p class="text-sm text-gray-600">Layout sesuai file PDF.</p>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                        Sinkron Otomatis
+                    </span>
+                </div>
+                <div class="cv-preview p-3 sm:p-5 rounded-2xl border border-gray-200 bg-white xl:sticky xl:top-6" id="preview-shell">
+                    <div id="preview-canvas" class="h-full"></div>
+                    <p id="preview-placeholder" class="text-sm text-gray-400 mt-4 text-center">Isi formulir di kiri untuk melihat preview interaktif.</p>
+                </div>
+                <div class="fixed bottom-0 left-0 right-0 xl:hidden bg-white p-4 border-t border-gray-200 shadow-xl">
+                    <button class="w-full py-3 px-4 rounded-lg text-base font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition duration-150" onclick="nextStep(6)">
+                        Finalkan & Unduh
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-slate-500">
+            <p class="text-center sm:text-left">© 2025 by Muhammad Rafli</p>
+            <div class="flex items-center gap-3 text-slate-500">
+                <a href="/" class="hover:text-emerald-700">Home</a>
+                <a href="/index.html" class="hover:text-emerald-700">CV Builder</a>
+                <a href="/surat-lamaran.html" class="hover:text-emerald-700">Surat Lamaran</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="donate-modal" class="donate-overlay hidden">
+        <div class="donate-dialog">
+            <div class="flex items-start gap-3 mb-3">
+                <span class="donate-badge">☕ Trakteer</span>
+                <button id="donate-close" class="ml-auto text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Dukung sebelum unduh?</h3>
+            <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                Satu cendolmu bisa bantu website ini terus hidup. Makasih banyak!
+            </p>
+            <div class="flex gap-3">
+                <button id="donate-cta" class="flex-1 py-2.5 px-4 bg-[#be1e2d] text-white font-semibold rounded-lg shadow hover:bg-[#a41a27] transition">
+                    Buka Trakteer
+                </button>
+                <button id="donate-skip" class="flex-1 py-2.5 px-4 border border-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition">
+                    Nanti saja
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <template id="experience-template">
+        <div class="border border-gray-200 rounded-lg p-4" data-entry-type="experience">
+            <div class="flex items-center justify-between mb-3">
+                <p class="font-semibold text-gray-800">Pengalaman</p>
+                <button type="button" class="text-sm text-red-500 hover:text-red-600" data-remove-entry>Hapus</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <input type="text" data-field="position" placeholder="Posisi" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="company" placeholder="Perusahaan" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="startDate" placeholder="Mulai (misal Januari 2020)" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="endDate" placeholder="Selesai (misal Sekarang)" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="location" placeholder="Lokasi" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border md:col-span-2" />
+            </div>
+            <textarea data-field="achievements" rows="3" placeholder="Pisahkan pencapaian dengan baris baru" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border"></textarea>
+        </div>
+    </template>
+
+    <template id="education-template">
+        <div class="border border-gray-200 rounded-lg p-4" data-entry-type="education">
+            <div class="flex items-center justify-between mb-3">
+                <p class="font-semibold text-gray-800">Pendidikan</p>
+                <button type="button" class="text-sm text-red-500 hover:text-red-600" data-remove-entry>Hapus</button>
+            </div>
+            <div class="space-y-3">
+                <input type="text" data-field="institution" placeholder="Nama Universitas / Institusi" class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="graduationYear" placeholder="Tahun Lulus" class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="degree" placeholder="Gelar Akademik, Jurusan" class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="gpa" placeholder="IPK (contoh: 3.80 / 4.00)" class="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+            </div>
+        </div>
+    </template>
+
+    <template id="certification-template">
+        <div class="border border-gray-200 rounded-lg p-4" data-entry-type="certification">
+            <div class="flex items-center justify-between mb-3">
+                <p class="font-semibold text-gray-800">Sertifikasi</p>
+                <button type="button" class="text-sm text-red-500 hover:text-red-600" data-remove-entry>Hapus</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input type="text" data-field="name" placeholder="Nama Sertifikasi" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="provider" placeholder="Lembaga Penerbit" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border" />
+                <input type="text" data-field="year" placeholder="Tahun Sertifikasi" class="rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 p-2 border md:col-span-2" />
+            </div>
+        </div>
+    </template>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-menu-toggle]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-menu-toggle');
+                    const menu = document.getElementById(targetId);
+                    if (!menu) return;
+                    menu.classList.toggle('hidden');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

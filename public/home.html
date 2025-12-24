@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LamarIn - Bangun Karir Impianmu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom Colors based on Ivory and Emerald Theme */
+        :root {
+            --ivory: #FDFBF7;
+            --emerald-dark: #064E3B;
+            --emerald-light: #10B981;
+            --charcoal: #1F2937;
+        }
+        body {
+            background-color: var(--ivory);
+            font-family: 'Inter', sans-serif;
+            color: var(--charcoal);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #FDFBF7 0%, #F3F4F6 100%);
+        }
+        .btn-primary {
+            background-color: var(--emerald-dark);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: var(--emerald-light);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            border: 1px solid #E5E7EB;
+            background-color: white;
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--emerald-light);
+            color: var(--emerald-dark);
+            background-color: #F9FAFB;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm border border-emerald-900/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-7 h-7">
+                            <polygon points="86,32 136,86 136,168 86,118" fill="#064E3B"/>
+                            <polygon points="86,118 136,168 86,206 36,156" fill="#0A6B52" opacity="0.9"/>
+                            <polygon points="124,96 188,60 220,92 156,128" fill="#10B981"/>
+                            <polygon points="156,128 220,92 220,196 156,232" fill="#0EA371" opacity="0.92"/>
+                            <polygon points="116,140 152,120 176,144 140,164" fill="#F7F5EF" opacity="1"/>
+                        </svg>
+                    </div>
+                    <!-- Nama website diubah menjadi LamarIn -->
+                    <span class="text-2xl font-black tracking-tighter text-logo">Lamar<span class="text-[#10B981]">In</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="/index.html" class="hover:text-[#10B981]">Pembuat CV</a>
+                    <a href="/surat-lamaran.html" class="hover:text-[#10B981]">Surat Lamaran</a>
+                    <a href="/merge-pdf.html" class="hover:text-[#10B981]">Merger PDF</a>
+                </div>
+                <button class="md:hidden p-2 rounded-lg border border-gray-200 text-[#064E3B] hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-home-menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            <div id="nav-home-menu" class="md:hidden py-3 space-y-2 border-t border-gray-100 hidden">
+                <a href="/index.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Pembuat CV</a>
+                <a href="/surat-lamaran.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Surat Lamaran</a>
+                <a href="/merge-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Merger PDF</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden pt-16 pb-24 hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center lg:text-left grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="inline-block px-4 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-4">
+                        Telah Membantu 10,000+ Pelamar Kerja
+                    </span>
+                    <h1 class="text-5xl lg:text-6xl font-extrabold text-[#064E3B] leading-tight mb-6">
+                        Buat CV & Surat Lamaran Profesional dalam <span class="text-[#10B981]">5 Menit</span>.
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-xl">
+                        Hasilkan dokumen lamaran kerja yang ATS-friendly dengan editor cerdas kami. Tingkatkan peluang panggilan interview Anda hingga 3x lipat.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="/index.html" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
+                            <i class="fas fa-magic"></i> Bangun CV Sekarang
+                        </a>
+                        <a href="/surat-lamaran.html" class="btn-secondary px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
+                            <i class="fas fa-envelope-open-text"></i> Buat Surat Lamaran
+                        </a>
+                    </div>
+                    <div class="mt-8 flex items-center gap-4 text-sm text-gray-500 justify-center lg:justify-start">
+                        <span class="flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> Gratis Selamanya</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-check text-emerald-500"></i> PDF High Quality</span>
+                    </div>
+                </div>
+
+                <!-- Visual Element: Mockup/Illustration -->
+                <div class="relative">
+                    <div class="bg-white p-6 rounded-2xl shadow-2xl border border-gray-100 transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
+                                    <img src="https://i.pravatar.cc/150?u=john" alt="John Doe">
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">John Doe</h3>
+                                    <p class="text-xs text-gray-400">Software Engineer</p>
+                                </div>
+                            </div>
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-md text-xs font-bold italic">ATS Perfect</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="h-2 w-full bg-gray-100 rounded"></div>
+                            <div class="h-2 w-5/6 bg-gray-100 rounded"></div>
+                            <div class="h-2 w-4/6 bg-gray-100 rounded"></div>
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <div class="h-8 bg-emerald-50 rounded flex items-center justify-center text-[10px] font-bold text-emerald-700">Manajemen</div>
+                                <div class="h-8 bg-emerald-50 rounded flex items-center justify-center text-[10px] font-bold text-emerald-700">Leadership</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-[#1F2937] text-white p-4 rounded-xl shadow-lg animate-bounce hidden sm:block">
+                        <p class="text-xs font-bold">Resume Score</p>
+                        <p class="text-2xl font-bold text-emerald-400">98/100</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-[#064E3B] mb-4">Semua yang Anda Butuhkan untuk Melamar</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Kami menyediakan alat bantu lengkap untuk memastikan profil profesional Anda menonjol di hadapan rekruter.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-8 rounded-2xl border border-gray-100 bg-[#FDFBF7] card-shadow hover:scale-105 transition-all">
+                    <div class="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">CV Builder Pintar</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Editor drag-and-drop yang memudahkan Anda menyusun pengalaman kerja tanpa perlu pusing soal desain.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-8 rounded-2xl border border-gray-100 bg-[#FDFBF7] card-shadow hover:scale-105 transition-all">
+                    <div class="w-14 h-14 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Penulis Surat Lamaran</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Buat surat lamaran kerja yang personal dan persuasif hanya dengan menjawab beberapa pertanyaan singkat.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-8 rounded-2xl border border-gray-100 bg-[#FDFBF7] card-shadow hover:scale-105 transition-all">
+                    <div class="w-14 h-14 bg-purple-100 text-purple-700 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Merger PDF</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Gabungkan beberapa PDF jadi satu file final langsung di browser, tanpa unggah ke server.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#064E3B] text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-8 h-8">
+                    <polygon points="86,32 136,86 136,168 86,118" fill="#064E3B"/>
+                    <polygon points="86,118 136,168 86,206 36,156" fill="#0A6B52" opacity="0.9"/>
+                    <polygon points="124,96 188,60 220,92 156,128" fill="#10B981"/>
+                    <polygon points="156,128 220,92 220,196 156,232" fill="#0EA371" opacity="0.92"/>
+                    <polygon points="116,140 152,120 176,144 140,164" fill="#F7F5EF" opacity="1"/>
+                </svg>
+                <!-- Nama website diubah menjadi LamarIn -->
+                <span class="text-2xl font-black tracking-tighter">Lamar<span class="text-[#10B981]">In</span></span>
+            </div>
+            <p class="text-emerald-200 mb-8 max-w-md mx-auto">Solusi lengkap pembuatan dokumen profesional untuk karir impian Anda.</p>
+            <div class="flex justify-center space-x-6 mb-8 text-emerald-300">
+                <a href="#" class="hover:text-white transition-colors">Instagram</a>
+                <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+                <a href="#" class="hover:text-white transition-colors">TikTok</a>
+            </div>
+            <div class="text-xs text-emerald-400 border-t border-emerald-900 pt-8">
+                &copy; 2025 LamarIn - Seluruh Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </footer>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-menu-toggle]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-menu-toggle');
+                const menu = document.getElementById(targetId);
+                if (!menu) return;
+                menu.classList.toggle('hidden');
+            });
+        });
+    });
+</script>
+</html>
