@@ -208,12 +208,23 @@ async function downloadPdf() {
         setSaveIndicator('Menyiapkan PDF...', 'muted');
         setPdfFallbackLink(null);
         const safeName = (state.lastPayload?.personal?.full_name || 'cv-builder').replace(/[^a-z0-9\-]+/gi, '-');
-        const downloaded = await tryServerPdfDownload(safeName);
-        if (!downloaded) {
+        let downloaded = false;
+
+        try {
             await downloadPdfFromPreview(`${safeName}.pdf`);
-            setSaveIndicator('PDF siap. Jika tidak otomatis terunduh, klik link di bawah tombol.', 'success');
-            return;
+            downloaded = true;
+        } catch (error) {
+            console.warn('Gagal membuat PDF dari preview, coba server.', error);
         }
+
+        if (!downloaded) {
+            downloaded = await tryServerPdfDownload(safeName);
+        }
+
+        if (!downloaded) {
+            throw new Error('Gagal membuat PDF');
+        }
+
         setSaveIndicator('PDF berhasil dibuat', 'success');
     } catch (error) {
         console.error(error);
