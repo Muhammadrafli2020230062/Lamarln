@@ -12,6 +12,13 @@ const ACCENT_MAP = {
   black: '#111827'
 };
 const TEXT_SPACING = { lineGap: 3, paragraphGap: 8, characterSpacing: 0.3 };
+const MM_TO_PT = 72 / 25.4;
+const PDF_MARGINS = {
+  top: 15 * MM_TO_PT,
+  bottom: 15 * MM_TO_PT,
+  left: 18 * MM_TO_PT,
+  right: 18 * MM_TO_PT
+};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,7 +46,7 @@ app.get('/api/cv/pdf', (_req, res, next) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="cv-builder.pdf"');
 
-    const doc = new PDFDocument({ margin: 50 });
+    const doc = new PDFDocument({ size: 'A4', margins: PDF_MARGINS });
     doc.on('error', (err) => {
       console.error('PDF generation error:', err);
       if (!res.headersSent) {

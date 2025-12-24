@@ -164,6 +164,7 @@ function attachDownloadHandler() {
 }
 
 let donationResolve = null;
+let lastDownloadUrl = null;
 
 function setupDonationModal() {
     const modal = document.getElementById('donate-modal');
@@ -205,16 +206,51 @@ async function downloadPdf() {
         }
 
         setSaveIndicator('Menyiapkan PDF...', 'muted');
+        setPdfFallbackLink(null);
         const safeName = (state.lastPayload?.personal?.full_name || 'cv-builder').replace(/[^a-z0-9\-]+/gi, '-');
         const downloaded = await tryServerPdfDownload(safeName);
         if (!downloaded) {
             await downloadPdfFromPreview(`${safeName}.pdf`);
+            setSaveIndicator('PDF siap. Jika tidak otomatis terunduh, klik link di bawah tombol.', 'success');
+            return;
         }
         setSaveIndicator('PDF berhasil dibuat', 'success');
     } catch (error) {
         console.error(error);
         setSaveIndicator('Gagal membuat PDF', 'error');
     }
+}
+
+function setPdfFallbackLink(url, filename) {
+    const link = document.getElementById('pdf-fallback-link');
+    if (!link) return;
+
+    if (lastDownloadUrl) {
+        URL.revokeObjectURL(lastDownloadUrl);
+        lastDownloadUrl = null;
+    }
+
+    if (!url) {
+        link.classList.add('hidden');
+        link.removeAttribute('href');
+        link.removeAttribute('download');
+        return;
+    }
+
+    lastDownloadUrl = url;
+    link.href = url;
+    link.download = filename || 'cv-builder.pdf';
+    link.classList.remove('hidden');
+}
+
+function triggerDownload(url, filename) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename || 'cv-builder.pdf';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
 }
 
 async function tryServerPdfDownload(fileBaseName) {
@@ -226,13 +262,9 @@ async function tryServerPdfDownload(fileBaseName) {
         const blob = await response.blob();
         if (!blob || !blob.size) return false;
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${fileBaseName}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        const filename = `${fileBaseName}.pdf`;
+        setPdfFallbackLink(url, filename);
+        triggerDownload(url, filename);
         return true;
     } catch (error) {
         console.warn('PDF server tidak tersedia, gunakan unduh dari browser.', error);
@@ -263,7 +295,7 @@ async function downloadPdfFromPreview(filename) {
     }
 
     const options = {
-        margin: 5,
+        margin: 0,
         filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
@@ -281,7 +313,13 @@ async function downloadPdfFromPreview(filename) {
     document.body.appendChild(sandbox);
 
     try {
-        await window.html2pdf().set(options).from(clone).save();
+        const blob = await window.html2pdf().set(options).from(clone).outputPdf('blob');
+        if (!blob || !blob.size) {
+            throw new Error('PDF kosong');
+        }
+        const url = URL.createObjectURL(blob);
+        setPdfFallbackLink(url, filename);
+        triggerDownload(url, filename);
     } finally {
         sandbox.remove();
     }
