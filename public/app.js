@@ -206,22 +206,56 @@ async function downloadPdf() {
 
         setSaveIndicator('Menyiapkan PDF...', 'muted');
         const safeName = (state.lastPayload?.personal?.full_name || 'cv-builder').replace(/[^a-z0-9\-]+/gi, '-');
-        const response = await fetch('/api/cv/pdf');
-        if (!response.ok) throw new Error('Gagal mengunduh PDF');
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${safeName}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        const downloaded = await tryServerPdfDownload(safeName);
+        if (!downloaded) {
+            await downloadPdfFromPreview(`${safeName}.pdf`);
+        }
         setSaveIndicator('PDF berhasil dibuat', 'success');
     } catch (error) {
         console.error(error);
         setSaveIndicator('Gagal membuat PDF', 'error');
     }
+}
+
+async function tryServerPdfDownload(fileBaseName) {
+    try {
+        const response = await fetch('/api/cv/pdf');
+        if (!response.ok) return false;
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${fileBaseName}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        return true;
+    } catch (error) {
+        console.warn('PDF server tidak tersedia, gunakan unduh dari browser.', error);
+        return false;
+    }
+}
+
+async function downloadPdfFromPreview(filename) {
+    const target = document.querySelector('#preview-canvas .cv-page');
+    if (!target) {
+        throw new Error('Preview tidak ditemukan');
+    }
+    if (typeof window.html2pdf !== 'function') {
+        throw new Error('html2pdf tidak tersedia');
+    }
+
+    const options = {
+        margin: 5,
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all'] }
+    };
+
+    await window.html2pdf().set(options).from(target).save();
 }
 
 async function loadInitialData() {
