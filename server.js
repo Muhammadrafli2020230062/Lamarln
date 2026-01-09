@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const os = require('os');
+const multer = require('multer');
+const { spawn } = require('child_process');
 
 const ALLOWED_TEMPLATES = ['minimalist', 'modern'];
 const ACCENT_MAP = {
@@ -19,6 +23,25 @@ const PDF_MARGINS = {
   left: 18 * MM_TO_PT,
   right: 18 * MM_TO_PT
 };
+const UPLOAD_DIR = path.join(os.tmpdir(), 'lamarin-compress');
+const fsp = fs.promises;
+const GS_CANDIDATES = process.platform === 'win32' ? ['gswin64c', 'gswin32c', 'gs'] : ['gs'];
+
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+const upload = multer({
+  dest: UPLOAD_DIR,
+  limits: { fileSize: 30 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const isPdf =
+      file.mimetype === 'application/pdf' || file.originalname.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+      cb(new Error('Hanya file PDF yang didukung.'));
+      return;
+    }
+    cb(null, true);
+  }
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -63,6 +86,81 @@ app.get('/api/cv/pdf', (_req, res, next) => {
     next(error);
   }
 });
+
+app.post(
+  '/api/compress',
+  (req, res, next) => {
+    upload.single('file')(req, res, (err) => {
+      if (err) {
+        const message =
+          err instanceof multer.MulterError
+            ? err.code === 'LIMIT_FILE_SIZE'
+              ? 'Ukuran file terlalu besar (maks 30MB).'
+              : 'Upload file gagal.'
+            : err.message || 'Upload file gagal.';
+        res.status(400).json({ error: message });
+        return;
+      }
+      next();
+    });
+  },
+  async (req, res) => {
+    if (!req.file) {
+      res.status(400).json({ error: 'File PDF wajib diunggah.' });
+      return;
+    }
+
+    const inputPath = req.file.path;
+    const outputPath = path.join(UPLOAD_DIR, `${req.file.filename}-compressed.pdf`);
+    const originalName = buildSafeFilename(req.file.originalname || 'document.pdf');
+    const compressedName = buildCompressedName(originalName);
+
+    try {
+      await compressPdfWithGhostscript(inputPath, outputPath);
+      const [inputStat, outputStat] = await Promise.all([
+        fsp.stat(inputPath),
+        fsp.stat(outputPath)
+      ]);
+      const compressed = outputStat.size < inputStat.size;
+      const downloadPath = compressed ? outputPath : inputPath;
+      const downloadName = compressed ? compressedName : originalName;
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${downloadName}"`);
+      res.setHeader('X-Original-Size', inputStat.size);
+      res.setHeader('X-Output-Size', compressed ? outputStat.size : inputStat.size);
+      res.setHeader('X-Compression', compressed ? 'compressed' : 'original');
+
+      const stream = fs.createReadStream(downloadPath);
+      const cleanup = async () => {
+        await safeUnlink(inputPath);
+        await safeUnlink(outputPath);
+      };
+
+      stream.on('error', (err) => {
+        console.error('Stream error:', err);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Gagal mengirim file.' });
+        }
+      });
+
+      res.on('finish', cleanup);
+      res.on('close', cleanup);
+      stream.pipe(res);
+    } catch (error) {
+      await safeUnlink(inputPath);
+      await safeUnlink(outputPath);
+      if (error && error.code === 'GS_NOT_FOUND') {
+        res.status(500).json({
+          error: 'Ghostscript belum terpasang di server. Instal Ghostscript dulu.'
+        });
+        return;
+      }
+      console.error('Compression error:', error);
+      res.status(500).json({ error: 'Gagal mengompres PDF.' });
+    }
+  }
+);
 
 app.listen(PORT, () => {
   console.log(`CV Builder server running on http://localhost:${PORT}`);
@@ -556,4 +654,83 @@ function writeMetaLine(doc, text, accentHex) {
     width: getBodyWidth(doc)
   });
   doc.moveDown(0.1);
+}
+
+async function safeUnlink(filePath) {
+  if (!filePath) return;
+  try {
+    await fsp.unlink(filePath);
+  } catch (error) {
+    if (error && error.code !== 'ENOENT') {
+      console.error('Cleanup error:', error);
+    }
+  }
+}
+
+function buildSafeFilename(filename) {
+  return filename.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '-');
+}
+
+function buildCompressedName(filename) {
+  const base = filename.toLowerCase().endsWith('.pdf') ? filename.slice(0, -4) : filename;
+  return `${base}-compressed.pdf`;
+}
+
+async function compressPdfWithGhostscript(inputPath, outputPath) {
+  const args = [
+    '-sDEVICE=pdfwrite',
+    '-dCompatibilityLevel=1.4',
+    '-dPDFSETTINGS=/screen',
+    '-dNOPAUSE',
+    '-dQUIET',
+    '-dBATCH',
+    '-dDetectDuplicateImages=true',
+    '-dCompressFonts=true',
+    '-dSubsetFonts=true',
+    `-sOutputFile=${outputPath}`,
+    inputPath
+  ];
+
+  await runGhostscript(args);
+}
+
+function runGhostscript(args) {
+  return new Promise((resolve, reject) => {
+    const tryCandidate = (index) => {
+      if (index >= GS_CANDIDATES.length) {
+        const error = new Error('Ghostscript tidak ditemukan.');
+        error.code = 'GS_NOT_FOUND';
+        reject(error);
+        return;
+      }
+
+      const binary = GS_CANDIDATES[index];
+      const proc = spawn(binary, args, { stdio: ['ignore', 'ignore', 'pipe'] });
+      let stderr = '';
+
+      proc.stderr.on('data', (chunk) => {
+        stderr += chunk.toString();
+      });
+
+      proc.on('error', (err) => {
+        if (err.code === 'ENOENT') {
+          tryCandidate(index + 1);
+          return;
+        }
+        reject(err);
+      });
+
+      proc.on('close', (code) => {
+        if (code === 0) {
+          resolve();
+          return;
+        }
+        const error = new Error(stderr || `Ghostscript gagal dengan kode ${code}.`);
+        error.code = 'GS_FAILED';
+        reject(error);
+      });
+    };
+
+    tryCandidate(0);
+  });
 }

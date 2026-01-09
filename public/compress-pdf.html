@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kompres PDF - LamarIn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body { font-family: 'Fredoka', 'Inter', sans-serif; background-color: #f8fafc; }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-top-color: #ffffff;
+            border-radius: 9999px;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100">
+    <nav class="bg-white shadow-sm sticky top-0 z-40 border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm border border-emerald-900/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-7 h-7">
+                        <polygon points="86,32 136,86 136,168 86,118" fill="#064E3B"/>
+                        <polygon points="86,118 136,168 86,206 36,156" fill="#0A6B52" opacity="0.9"/>
+                        <polygon points="124,96 188,60 220,92 156,128" fill="#10B981"/>
+                        <polygon points="156,128 220,92 220,196 156,232" fill="#0EA371" opacity="0.92"/>
+                        <polygon points="116,140 152,120 176,144 140,164" fill="#F7F5EF" opacity="1"/>
+                    </svg>
+                </div>
+                <span class="text-2xl font-black tracking-tighter">Lamar<span class="text-[#10B981]">In</span></span>
+            </div>
+            <div class="hidden md:flex flex-wrap items-center gap-2 sm:gap-3 text-sm font-semibold">
+                <a href="/home.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Home</a>
+                <a href="/index.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">CV Builder</a>
+                <a href="/surat-lamaran.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Surat Lamaran</a>
+                <a href="/merge-pdf.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Merger PDF</a>
+                <a href="/compress-pdf.html" class="py-2 px-4 rounded-lg bg-emerald-700 text-white shadow hover:bg-emerald-800 transition inline-block">Kompres PDF</a>
+            </div>
+            <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-compress-menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+        <div id="nav-compress-menu" class="md:hidden py-3 space-y-2 border-t border-gray-100 hidden">
+            <a href="/home.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
+            <a href="/index.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">CV Builder</a>
+            <a href="/surat-lamaran.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Surat Lamaran</a>
+            <a href="/merge-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Merger PDF</a>
+            <a href="/compress-pdf.html" class="block px-2 py-2 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition">Kompres PDF</a>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+        <div class="flex flex-col gap-2">
+            <p class="text-xs font-bold text-emerald-700 uppercase tracking-[0.2em]">Toolkit</p>
+            <h1 class="text-3xl font-extrabold text-slate-900">Kompres PDF dengan Sekali Klik</h1>
+            <p class="text-sm text-slate-500">Unggah satu PDF, kompres, lalu unduh hasilnya langsung.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)] gap-6 items-start">
+            <section class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 space-y-4">
+                <div class="border-2 border-dashed border-emerald-200 rounded-2xl p-6 text-center bg-emerald-50/50" id="dropzone">
+                    <p class="text-lg font-bold text-slate-900">Tarik & Letakkan PDF di sini</p>
+                    <p class="text-sm text-slate-500">Atau pilih file lewat tombol di bawah</p>
+                    <button id="btn-select" class="mt-4 px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold shadow hover:bg-emerald-700 transition">Pilih File PDF</button>
+                    <input id="file-input" type="file" accept="application/pdf" class="hidden" />
+                </div>
+                <div class="flex items-center justify-between text-sm text-slate-600">
+                    <span id="status-text">Belum ada file dipilih.</span>
+                    <button id="btn-clear" class="text-emerald-700 font-semibold hover:text-emerald-800" type="button">Bersihkan</button>
+                </div>
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500">File</span>
+                        <span id="file-name" class="font-semibold text-slate-900">-</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500">Ukuran asli</span>
+                        <span id="file-size" class="font-semibold text-slate-900">-</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-slate-500">Ukuran hasil</span>
+                        <span id="result-size" class="font-semibold text-emerald-700">-</span>
+                    </div>
+                    <div class="text-xs text-slate-500" id="saving-text">Hasil kompres akan tampil di sini.</div>
+                </div>
+            </section>
+
+            <section class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">1</div>
+                    <div>
+                        <p class="font-bold text-slate-900">1. Unggah PDF</p>
+                        <p class="text-sm text-slate-500">Hanya satu file PDF.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">2</div>
+                    <div>
+                        <p class="font-bold text-slate-900">2. Kompres & Unduh</p>
+                        <p class="text-sm text-slate-500">Klik tombol untuk memulai kompres.</p>
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <button id="btn-compress" class="w-full py-3 px-4 rounded-lg bg-emerald-700 text-white font-bold shadow hover:bg-emerald-800 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2" type="button" disabled>
+                        <span>Kompres & Unduh PDF</span>
+                    </button>
+                </div>
+                <div class="text-xs text-slate-500">
+                    Proses dilakukan di server agar ukuran lebih stabil dan kecil.
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const state = { file: null, isCompressing: false, resultSize: null, usedOriginal: false };
+        const fileInput = document.getElementById('file-input');
+        const dropzone = document.getElementById('dropzone');
+        const fileNameEl = document.getElementById('file-name');
+        const fileSizeEl = document.getElementById('file-size');
+        const resultSizeEl = document.getElementById('result-size');
+        const savingTextEl = document.getElementById('saving-text');
+        const statusText = document.getElementById('status-text');
+        const compressBtn = document.getElementById('btn-compress');
+        const clearBtn = document.getElementById('btn-clear');
+        const selectBtn = document.getElementById('btn-select');
+
+        selectBtn.addEventListener('click', () => fileInput.click());
+        clearBtn.addEventListener('click', () => {
+            resetState();
+            setStatus('File dibersihkan.');
+        });
+        fileInput.addEventListener('change', (e) => handleFileList(e.target.files));
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('ring-2', 'ring-emerald-400');
+        });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('ring-2', 'ring-emerald-400'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('ring-2', 'ring-emerald-400');
+            handleFileList(e.dataTransfer.files);
+        });
+
+        compressBtn.addEventListener('click', compressPdf);
+        document.querySelectorAll('[data-menu-toggle]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-menu-toggle');
+                const menu = document.getElementById(targetId);
+                if (!menu) return;
+                menu.classList.toggle('hidden');
+            });
+        });
+
+        async function handleFileList(fileList) {
+            const file = Array.from(fileList || [])[0];
+            if (!file) return;
+            if (!isPdfFile(file)) {
+                setStatus('Hanya file PDF yang bisa dikompres.', 'error');
+                return;
+            }
+            state.file = file;
+            state.resultSize = null;
+            state.usedOriginal = false;
+            renderFileInfo();
+            setStatus('File siap dikompres.');
+            fileInput.value = '';
+        }
+
+        function renderFileInfo() {
+            if (!state.file) {
+                fileNameEl.textContent = '-';
+                fileSizeEl.textContent = '-';
+                resultSizeEl.textContent = '-';
+                savingTextEl.textContent = 'Hasil kompres akan tampil di sini.';
+                compressBtn.disabled = true;
+                return;
+            }
+            fileNameEl.textContent = state.file.name;
+            fileSizeEl.textContent = formatSize(state.file.size);
+            if (state.resultSize) {
+                resultSizeEl.textContent = formatSize(state.resultSize);
+                savingTextEl.textContent = state.usedOriginal
+                    ? 'PDF sudah optimal. File asli diunduh.'
+                    : formatSavings(state.file.size, state.resultSize);
+            } else {
+                resultSizeEl.textContent = '-';
+                savingTextEl.textContent = 'Klik kompres untuk melihat hasil ukuran baru.';
+            }
+            compressBtn.disabled = !state.file || state.isCompressing;
+        }
+
+        async function compressPdf() {
+            if (!state.file) {
+                setStatus('Pilih file PDF terlebih dulu.', 'error');
+                return;
+            }
+            try {
+                setCompressing(true);
+                setStatus('Mengompres PDF di server...');
+                const formData = new FormData();
+                formData.append('file', state.file);
+                const response = await fetch('/api/compress', { method: 'POST', body: formData });
+                const contentType = response.headers.get('content-type') || '';
+                if (!response.ok) {
+                    let message = 'Gagal mengompres PDF.';
+                    if (contentType.includes('application/json')) {
+                        const data = await response.json();
+                        if (data && data.error) message = data.error;
+                    }
+                    throw new Error(message);
+                }
+                const blob = await response.blob();
+                if (!blob.size) {
+                    throw new Error('Hasil kompres kosong.');
+                }
+                state.resultSize = blob.size;
+                state.usedOriginal = response.headers.get('x-compression') === 'original';
+                renderFileInfo();
+                const suggestedName =
+                    getFileNameFromDisposition(response.headers.get('content-disposition')) ||
+                    (state.usedOriginal ? state.file.name : buildOutputName(state.file.name));
+                downloadBlob(blob, suggestedName);
+                setStatus(
+                    state.usedOriginal ? 'PDF sudah optimal. File asli diunduh.' : 'Selesai! PDF terkompres siap diunduh.',
+                    state.usedOriginal ? 'muted' : 'success'
+                );
+            } catch (error) {
+                console.error(error);
+                setStatus(error.message || 'Gagal mengompres PDF.', 'error');
+            } finally {
+                setCompressing(false);
+            }
+        }
+
+        function setCompressing(flag) {
+            state.isCompressing = flag;
+            compressBtn.disabled = flag || !state.file;
+            compressBtn.innerHTML = flag
+                ? '<span class="spinner"></span><span>Mengompres...</span>'
+                : '<span>Kompres & Unduh PDF</span>';
+        }
+
+        function resetState() {
+            state.file = null;
+            state.resultSize = null;
+            state.usedOriginal = false;
+            setCompressing(false);
+            renderFileInfo();
+        }
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function getFileNameFromDisposition(header) {
+            if (!header) return '';
+            const match = /filename="([^"]+)"/.exec(header);
+            return match ? match[1] : '';
+        }
+
+        function formatSize(bytes) {
+            if (!bytes) return '0 B';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0;
+            let size = bytes;
+            while (size >= 1024 && i < units.length - 1) {
+                size /= 1024;
+                i += 1;
+            }
+            return `${size.toFixed(size >= 10 || size % 1 === 0 ? 0 : 1)} ${units[i]}`;
+        }
+
+        function formatSavings(original, compressed) {
+            if (!original || !compressed) return 'Hasil kompres akan tampil di sini.';
+            const diff = original - compressed;
+            const ratio = (Math.abs(diff) / original) * 100;
+            if (diff > 0) {
+                return `Hemat ${formatSize(diff)} (${ratio.toFixed(1)}%).`;
+            }
+            if (diff < 0) {
+                return `Ukuran bertambah ${formatSize(Math.abs(diff))} (${ratio.toFixed(1)}%).`;
+            }
+            return 'Tidak ada perubahan ukuran.';
+        }
+
+        function buildOutputName(fileName) {
+            const base = fileName.toLowerCase().endsWith('.pdf') ? fileName.slice(0, -4) : fileName;
+            return `${base}-compressed.pdf`;
+        }
+
+        function setStatus(message, tone = 'muted') {
+            statusText.textContent = message;
+            statusText.classList.remove('text-emerald-600', 'text-red-600', 'text-slate-600');
+            const toneClass = tone === 'success' ? 'text-emerald-600' : tone === 'error' ? 'text-red-600' : 'text-slate-600';
+            statusText.classList.add(toneClass);
+        }
+
+        function readFileBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (err) => reject(err);
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function isPdfFile(file) {
+            if (!file) return false;
+            return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        }
+
+        async function rasterizePdf(buffer) {
+            const loadingTask = pdfjsLib.getDocument({ data: buffer });
+            const pdf = await loadingTask.promise;
+            if (!pdf.numPages) {
+                await pdf.destroy();
+                throw new Error('PDF tidak memiliki halaman.');
+            }
+            const outputDoc = await PDFLib.PDFDocument.create();
+
+            for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
+                setStatus(`Mengompres halaman ${pageIndex}/${pdf.numPages}...`);
+                const page = await pdf.getPage(pageIndex);
+                const baseViewport = page.getViewport({ scale: 1 });
+                const scale = getScale(baseViewport);
+                const viewport = page.getViewport({ scale });
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.floor(viewport.width));
+                canvas.height = Math.max(1, Math.floor(viewport.height));
+                const ctx = canvas.getContext('2d', { alpha: false });
+                await page.render({ canvasContext: ctx, viewport }).promise;
+                const jpegBytes = await canvasToJpegBytes(canvas, COMPRESSION.quality);
+                const image = await outputDoc.embedJpg(jpegBytes);
+                const pdfPage = outputDoc.addPage([canvas.width, canvas.height]);
+                pdfPage.drawImage(image, { x: 0, y: 0, width: canvas.width, height: canvas.height });
+                page.cleanup();
+                canvas.width = 0;
+                canvas.height = 0;
+            }
+
+            await pdf.destroy();
+            return outputDoc.save({ useObjectStreams: true });
+        }
+
+        function getScale(viewport) {
+            const maxSide = Math.max(viewport.width, viewport.height);
+            let scale = COMPRESSION.scale;
+            if (maxSide * scale > MAX_DIMENSION) {
+                scale = MAX_DIMENSION / maxSide;
+            }
+            return Math.min(scale, COMPRESSION.scale);
+        }
+
+        function canvasToJpegBytes(canvas, quality) {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) {
+                            reject(new Error('Gagal membuat gambar.'));
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(new Uint8Array(reader.result));
+                        reader.onerror = (err) => reject(err);
+                        reader.readAsArrayBuffer(blob);
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            });
+        }
+    </script>
+</body>
+</html>
