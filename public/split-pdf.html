@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kompres PDF - LamarIn</title>
+    <title>Split PDF - LamarIn</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
@@ -47,40 +48,40 @@
                 <a href="/index.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">CV Builder</a>
                 <a href="/surat-lamaran.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Surat Lamaran</a>
                 <div class="relative" data-dropdown>
-                    <button type="button" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-flex items-center gap-2" data-dropdown-toggle="tools-menu-compress">
+                    <button type="button" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-flex items-center gap-2" data-dropdown-toggle="tools-menu-split">
                         <span>Tools PDF</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div id="tools-menu-compress" class="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white shadow-lg py-2 hidden">
+                    <div id="tools-menu-split" class="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white shadow-lg py-2 hidden">
                         <a href="/merge-pdf.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">Merger PDF</a>
-                        <a href="/compress-pdf.html" class="block px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50">Kompres PDF</a>
-                        <a href="/split-pdf.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">Split PDF</a>
+                        <a href="/compress-pdf.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">Kompres PDF</a>
+                        <a href="/split-pdf.html" class="block px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50">Split PDF</a>
                     </div>
                 </div>
             </div>
-            <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-compress-menu">
+            <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-split-menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
         </div>
-        <div id="nav-compress-menu" class="md:hidden py-3 space-y-2 border-t border-gray-100 hidden">
+        <div id="nav-split-menu" class="md:hidden py-3 space-y-2 border-t border-gray-100 hidden">
             <a href="/home.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Home</a>
             <a href="/index.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">CV Builder</a>
             <a href="/surat-lamaran.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Surat Lamaran</a>
             <a href="/merge-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Merger PDF</a>
-            <a href="/compress-pdf.html" class="block px-2 py-2 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition">Kompres PDF</a>
-            <a href="/split-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Split PDF</a>
+            <a href="/compress-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Kompres PDF</a>
+            <a href="/split-pdf.html" class="block px-2 py-2 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition">Split PDF</a>
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
         <div class="flex flex-col gap-2">
             <p class="text-xs font-bold text-emerald-700 uppercase tracking-[0.2em]">Toolkit</p>
-            <h1 class="text-3xl font-extrabold text-slate-900">Kompres PDF dengan Sekali Klik</h1>
-            <p class="text-sm text-slate-500">Unggah satu PDF, kompres, lalu unduh hasilnya langsung.</p>
+            <h1 class="text-3xl font-extrabold text-slate-900">Split PDF (Page Range)</h1>
+            <p class="text-sm text-slate-500">Ambil halaman tertentu jadi PDF baru.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-[420px_minmax(0,1fr)] gap-6 items-start">
@@ -108,39 +109,51 @@
                         <span class="text-slate-500">Ukuran hasil</span>
                         <span id="result-size" class="font-semibold text-emerald-700">-</span>
                     </div>
-                    <div class="text-xs text-slate-500" id="saving-text">Hasil kompres akan tampil di sini.</div>
+                    <div class="text-xs text-slate-500" id="saving-text">Hasil split akan tampil di sini.</div>
                 </div>
             </section>
 
             <section class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">1</div>
-                    <div>
-                        <p class="font-bold text-slate-900">1. Unggah PDF</p>
-                        <p class="text-sm text-slate-500">Hanya satu file PDF.</p>
-                    </div>
+                <div class="space-y-2">
+                    <label for="range-input" class="text-sm font-semibold text-slate-800">Masukkan range halaman</label>
+                    <input id="range-input" type="text" placeholder="Contoh: 1-2,5,7-9" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+                    <p class="text-xs text-slate-500">Format yang didukung: 1-2, 3, 1-2,5,7-9</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">2</div>
-                    <div>
-                        <p class="font-bold text-slate-900">2. Kompres & Unduh</p>
-                        <p class="text-sm text-slate-500">Klik tombol untuk memulai kompres.</p>
-                    </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-slate-500">Total halaman</span>
+                    <span id="total-pages" class="font-semibold text-slate-900">-</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-slate-500">Halaman terpilih</span>
+                    <span id="selected-count" class="font-semibold text-emerald-700">-</span>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-sm font-semibold text-slate-800">Preview halaman terpilih</p>
+                    <div id="selected-preview" class="flex flex-wrap gap-2"></div>
+                    <p id="selected-preview-note" class="text-xs text-slate-500"></p>
                 </div>
                 <div class="pt-2">
-                    <button id="btn-compress" class="w-full py-3 px-4 rounded-lg bg-emerald-700 text-white font-bold shadow hover:bg-emerald-800 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2" type="button" disabled>
-                        <span>Kompres & Unduh PDF</span>
+                    <button id="btn-split" class="w-full py-3 px-4 rounded-lg bg-emerald-700 text-white font-bold shadow hover:bg-emerald-800 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2" type="button" disabled>
+                        <span>Split & Unduh PDF</span>
                     </button>
                 </div>
                 <div class="text-xs text-slate-500">
-                    Proses dilakukan di server agar ukuran lebih stabil dan kecil.
+                    Semua proses dilakukan di browser Anda.
                 </div>
             </section>
         </div>
     </main>
 
     <script>
-        const state = { file: null, isCompressing: false, resultSize: null, usedOriginal: false };
+        const state = {
+            file: null,
+            buffer: null,
+            isProcessing: false,
+            totalPages: 0,
+            selectedPages: [],
+            resultSize: null
+        };
+
         const fileInput = document.getElementById('file-input');
         const dropzone = document.getElementById('dropzone');
         const fileNameEl = document.getElementById('file-name');
@@ -148,9 +161,14 @@
         const resultSizeEl = document.getElementById('result-size');
         const savingTextEl = document.getElementById('saving-text');
         const statusText = document.getElementById('status-text');
-        const compressBtn = document.getElementById('btn-compress');
+        const splitBtn = document.getElementById('btn-split');
         const clearBtn = document.getElementById('btn-clear');
         const selectBtn = document.getElementById('btn-select');
+        const rangeInput = document.getElementById('range-input');
+        const totalPagesEl = document.getElementById('total-pages');
+        const selectedCountEl = document.getElementById('selected-count');
+        const selectedPreviewEl = document.getElementById('selected-preview');
+        const selectedPreviewNote = document.getElementById('selected-preview-note');
 
         selectBtn.addEventListener('click', () => fileInput.click());
         clearBtn.addEventListener('click', () => {
@@ -158,6 +176,7 @@
             setStatus('File dibersihkan.');
         });
         fileInput.addEventListener('change', (e) => handleFileList(e.target.files));
+        rangeInput.addEventListener('input', () => updateSelectionPreview());
 
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -170,7 +189,7 @@
             handleFileList(e.dataTransfer.files);
         });
 
-        compressBtn.addEventListener('click', compressPdf);
+        splitBtn.addEventListener('click', splitPdf);
         document.querySelectorAll('[data-menu-toggle]').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const targetId = btn.getAttribute('data-menu-toggle');
@@ -201,100 +220,199 @@
             const file = Array.from(fileList || [])[0];
             if (!file) return;
             if (!isPdfFile(file)) {
-                setStatus('Hanya file PDF yang bisa dikompres.', 'error');
+                setStatus('Hanya file PDF yang bisa diproses.', 'error');
                 return;
             }
-            state.file = file;
-            state.resultSize = null;
-            state.usedOriginal = false;
-            renderFileInfo();
-            setStatus('File siap dikompres.');
-            fileInput.value = '';
+            setStatus('Memuat file...');
+            try {
+                const buffer = await readFileBuffer(file);
+                const pdf = await PDFLib.PDFDocument.load(buffer);
+                state.file = file;
+                state.buffer = buffer;
+                state.totalPages = pdf.getPageCount();
+                state.resultSize = null;
+                state.selectedPages = [];
+                rangeInput.value = '';
+                updateMeta();
+                setStatus('File siap displit.');
+            } catch (error) {
+                console.error(error);
+                setStatus('Gagal membaca PDF.', 'error');
+            } finally {
+                fileInput.value = '';
+            }
         }
 
-        function renderFileInfo() {
-            if (!state.file) {
-                fileNameEl.textContent = '-';
-                fileSizeEl.textContent = '-';
-                resultSizeEl.textContent = '-';
-                savingTextEl.textContent = 'Hasil kompres akan tampil di sini.';
-                compressBtn.disabled = true;
-                return;
-            }
-            fileNameEl.textContent = state.file.name;
-            fileSizeEl.textContent = formatSize(state.file.size);
+        function updateMeta() {
+            fileNameEl.textContent = state.file ? state.file.name : '-';
+            fileSizeEl.textContent = state.file ? formatSize(state.file.size) : '-';
+            totalPagesEl.textContent = state.totalPages ? `${state.totalPages} halaman` : '-';
             if (state.resultSize) {
                 resultSizeEl.textContent = formatSize(state.resultSize);
-                savingTextEl.textContent = state.usedOriginal
-                    ? 'PDF sudah optimal. File asli diunduh.'
-                    : formatSavings(state.file.size, state.resultSize);
+                savingTextEl.textContent = formatSavings(state.file.size, state.resultSize);
             } else {
                 resultSizeEl.textContent = '-';
-                savingTextEl.textContent = 'Klik kompres untuk melihat hasil ukuran baru.';
+                savingTextEl.textContent = 'Hasil split akan tampil di sini.';
             }
-            compressBtn.disabled = !state.file || state.isCompressing;
+            selectedCountEl.textContent = state.selectedPages.length ? `${state.selectedPages.length} halaman` : '-';
+            splitBtn.disabled = !state.file || state.isProcessing;
+            renderSelectedPreview();
         }
 
-        async function compressPdf() {
-            if (!state.file) {
+        function renderSelectedPreview() {
+            selectedPreviewEl.innerHTML = '';
+            selectedPreviewNote.textContent = '';
+            if (!state.selectedPages.length) {
+                const placeholder = document.createElement('span');
+                placeholder.className = 'text-xs text-slate-400';
+                placeholder.textContent = 'Belum ada halaman dipilih.';
+                selectedPreviewEl.appendChild(placeholder);
+                return;
+            }
+
+            const MAX_PREVIEW = 60;
+            const previewPages = state.selectedPages.slice(0, MAX_PREVIEW);
+            previewPages.forEach((page) => {
+                const chip = document.createElement('span');
+                chip.className = 'px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+                chip.textContent = page;
+                selectedPreviewEl.appendChild(chip);
+            });
+
+            if (state.selectedPages.length > MAX_PREVIEW) {
+                const remaining = state.selectedPages.length - MAX_PREVIEW;
+                selectedPreviewNote.textContent = `+${remaining} halaman lainnya`;
+            }
+        }
+
+        function updateSelectionPreview() {
+            if (!state.totalPages) {
+                state.selectedPages = [];
+                updateMeta();
+                return;
+            }
+            const { pages, error } = parseRanges(rangeInput.value, state.totalPages);
+            if (error && rangeInput.value.trim()) {
+                setStatus(error, 'error');
+                state.selectedPages = [];
+            } else {
+                if (error) {
+                    setStatus('Masukkan range halaman.', 'muted');
+                } else {
+                    setStatus('Range siap diproses.');
+                }
+                state.selectedPages = pages;
+            }
+            updateMeta();
+        }
+
+        async function splitPdf() {
+            if (!state.file || !state.buffer) {
                 setStatus('Pilih file PDF terlebih dulu.', 'error');
                 return;
             }
+            const { pages, error } = parseRanges(rangeInput.value, state.totalPages);
+            if (error) {
+                setStatus(error, 'error');
+                return;
+            }
+            if (!pages.length) {
+                setStatus('Masukkan range halaman.', 'error');
+                return;
+            }
+
             try {
-                setCompressing(true);
-                setStatus('Mengompres PDF di server...');
-                const formData = new FormData();
-                formData.append('file', state.file);
-                const response = await fetch('/api/compress', { method: 'POST', body: formData });
-                const contentType = response.headers.get('content-type') || '';
-                if (!response.ok) {
-                    let message = 'Gagal mengompres PDF.';
-                    if (contentType.includes('application/json')) {
-                        const data = await response.json();
-                        if (data && data.error) message = data.error;
-                    }
-                    throw new Error(message);
-                }
-                const blob = await response.blob();
-                if (!blob.size) {
-                    throw new Error('Hasil kompres kosong.');
-                }
-                state.resultSize = blob.size;
-                state.usedOriginal = response.headers.get('x-compression') === 'original';
-                renderFileInfo();
-                const suggestedName =
-                    getFileNameFromDisposition(response.headers.get('content-disposition')) ||
-                    (state.usedOriginal ? state.file.name : buildOutputName(state.file.name));
-                downloadBlob(blob, suggestedName);
-                setStatus(
-                    state.usedOriginal ? 'PDF sudah optimal. File asli diunduh.' : 'Selesai! PDF terkompres siap diunduh.',
-                    state.usedOriginal ? 'muted' : 'success'
-                );
+                setProcessing(true);
+                setStatus('Memproses PDF...');
+                const sourceDoc = await PDFLib.PDFDocument.load(state.buffer);
+                const outputDoc = await PDFLib.PDFDocument.create();
+                const indices = pages.map((page) => page - 1);
+                const copiedPages = await outputDoc.copyPages(sourceDoc, indices);
+                copiedPages.forEach((page) => outputDoc.addPage(page));
+                const pdfBytes = await outputDoc.save();
+                state.resultSize = pdfBytes.length;
+                state.selectedPages = pages;
+                updateMeta();
+                downloadBlob(pdfBytes, buildOutputName(state.file.name));
+                setStatus('Selesai! PDF baru siap diunduh.', 'success');
             } catch (error) {
                 console.error(error);
-                setStatus(error.message || 'Gagal mengompres PDF.', 'error');
+                setStatus('Gagal memproses PDF.', 'error');
             } finally {
-                setCompressing(false);
+                setProcessing(false);
             }
         }
 
-        function setCompressing(flag) {
-            state.isCompressing = flag;
-            compressBtn.disabled = flag || !state.file;
-            compressBtn.innerHTML = flag
-                ? '<span class="spinner"></span><span>Mengompres...</span>'
-                : '<span>Kompres & Unduh PDF</span>';
+        function setProcessing(flag) {
+            state.isProcessing = flag;
+            splitBtn.disabled = flag || !state.file;
+            splitBtn.innerHTML = flag
+                ? '<span class="spinner"></span><span>Memproses...</span>'
+                : '<span>Split & Unduh PDF</span>';
         }
 
         function resetState() {
             state.file = null;
+            state.buffer = null;
+            state.totalPages = 0;
+            state.selectedPages = [];
             state.resultSize = null;
-            state.usedOriginal = false;
-            setCompressing(false);
-            renderFileInfo();
+            rangeInput.value = '';
+            setProcessing(false);
+            updateMeta();
         }
 
-        function downloadBlob(blob, filename) {
+        function parseRanges(input, totalPages) {
+            const value = (input || '').replace(/\s+/g, '');
+            if (!value) {
+                return { pages: [], error: 'Masukkan range halaman.' };
+            }
+            const parts = value.split(',').filter(Boolean);
+            if (!parts.length) {
+                return { pages: [], error: 'Masukkan range halaman.' };
+            }
+            const pageSet = new Set();
+
+            for (const part of parts) {
+                if (part.includes('-')) {
+                    const [startRaw, endRaw] = part.split('-');
+                    const start = Number.parseInt(startRaw, 10);
+                    const end = Number.parseInt(endRaw, 10);
+                    if (!startRaw || !endRaw || Number.isNaN(start) || Number.isNaN(end)) {
+                        return { pages: [], error: 'Format range tidak valid.' };
+                    }
+                    if (start <= 0 || end <= 0) {
+                        return { pages: [], error: 'Nomor halaman harus lebih dari 0.' };
+                    }
+                    if (start > end) {
+                        return { pages: [], error: 'Range tidak boleh terbalik.' };
+                    }
+                    if (end > totalPages) {
+                        return { pages: [], error: 'Range melebihi total halaman.' };
+                    }
+                    for (let i = start; i <= end; i += 1) {
+                        pageSet.add(i);
+                    }
+                } else {
+                    const page = Number.parseInt(part, 10);
+                    if (Number.isNaN(page)) {
+                        return { pages: [], error: 'Format range tidak valid.' };
+                    }
+                    if (page <= 0) {
+                        return { pages: [], error: 'Nomor halaman harus lebih dari 0.' };
+                    }
+                    if (page > totalPages) {
+                        return { pages: [], error: 'Range melebihi total halaman.' };
+                    }
+                    pageSet.add(page);
+                }
+            }
+
+            return { pages: Array.from(pageSet).sort((a, b) => a - b), error: '' };
+        }
+
+        function downloadBlob(bytes, filename) {
+            const blob = new Blob([bytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -305,10 +423,9 @@
             URL.revokeObjectURL(url);
         }
 
-        function getFileNameFromDisposition(header) {
-            if (!header) return '';
-            const match = /filename="([^"]+)"/.exec(header);
-            return match ? match[1] : '';
+        function buildOutputName(fileName) {
+            const base = fileName.toLowerCase().endsWith('.pdf') ? fileName.slice(0, -4) : fileName;
+            return `${base}-split.pdf`;
         }
 
         function formatSize(bytes) {
@@ -323,9 +440,9 @@
             return `${size.toFixed(size >= 10 || size % 1 === 0 ? 0 : 1)} ${units[i]}`;
         }
 
-        function formatSavings(original, compressed) {
-            if (!original || !compressed) return 'Hasil kompres akan tampil di sini.';
-            const diff = original - compressed;
+        function formatSavings(original, result) {
+            if (!original || !result) return 'Hasil split akan tampil di sini.';
+            const diff = original - result;
             const ratio = (Math.abs(diff) / original) * 100;
             if (diff > 0) {
                 return `Hemat ${formatSize(diff)} (${ratio.toFixed(1)}%).`;
@@ -334,11 +451,6 @@
                 return `Ukuran bertambah ${formatSize(Math.abs(diff))} (${ratio.toFixed(1)}%).`;
             }
             return 'Tidak ada perubahan ukuran.';
-        }
-
-        function buildOutputName(fileName) {
-            const base = fileName.toLowerCase().endsWith('.pdf') ? fileName.slice(0, -4) : fileName;
-            return `${base}-compressed.pdf`;
         }
 
         function setStatus(message, tone = 'muted') {
@@ -360,67 +472,6 @@
         function isPdfFile(file) {
             if (!file) return false;
             return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-        }
-
-        async function rasterizePdf(buffer) {
-            const loadingTask = pdfjsLib.getDocument({ data: buffer });
-            const pdf = await loadingTask.promise;
-            if (!pdf.numPages) {
-                await pdf.destroy();
-                throw new Error('PDF tidak memiliki halaman.');
-            }
-            const outputDoc = await PDFLib.PDFDocument.create();
-
-            for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex += 1) {
-                setStatus(`Mengompres halaman ${pageIndex}/${pdf.numPages}...`);
-                const page = await pdf.getPage(pageIndex);
-                const baseViewport = page.getViewport({ scale: 1 });
-                const scale = getScale(baseViewport);
-                const viewport = page.getViewport({ scale });
-                const canvas = document.createElement('canvas');
-                canvas.width = Math.max(1, Math.floor(viewport.width));
-                canvas.height = Math.max(1, Math.floor(viewport.height));
-                const ctx = canvas.getContext('2d', { alpha: false });
-                await page.render({ canvasContext: ctx, viewport }).promise;
-                const jpegBytes = await canvasToJpegBytes(canvas, COMPRESSION.quality);
-                const image = await outputDoc.embedJpg(jpegBytes);
-                const pdfPage = outputDoc.addPage([canvas.width, canvas.height]);
-                pdfPage.drawImage(image, { x: 0, y: 0, width: canvas.width, height: canvas.height });
-                page.cleanup();
-                canvas.width = 0;
-                canvas.height = 0;
-            }
-
-            await pdf.destroy();
-            return outputDoc.save({ useObjectStreams: true });
-        }
-
-        function getScale(viewport) {
-            const maxSide = Math.max(viewport.width, viewport.height);
-            let scale = COMPRESSION.scale;
-            if (maxSide * scale > MAX_DIMENSION) {
-                scale = MAX_DIMENSION / maxSide;
-            }
-            return Math.min(scale, COMPRESSION.scale);
-        }
-
-        function canvasToJpegBytes(canvas, quality) {
-            return new Promise((resolve, reject) => {
-                canvas.toBlob(
-                    (blob) => {
-                        if (!blob) {
-                            reject(new Error('Gagal membuat gambar.'));
-                            return;
-                        }
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(new Uint8Array(reader.result));
-                        reader.onerror = (err) => reject(err);
-                        reader.readAsArrayBuffer(blob);
-                    },
-                    'image/jpeg',
-                    quality
-                );
-            });
         }
     </script>
 </body>

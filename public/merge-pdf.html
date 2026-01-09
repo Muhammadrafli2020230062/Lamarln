@@ -47,8 +47,19 @@
                 <a href="/home.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Home</a>
                 <a href="/index.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">CV Builder</a>
                 <a href="/surat-lamaran.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Surat Lamaran</a>
-                <a href="/merge-pdf.html" class="py-2 px-4 rounded-lg bg-emerald-700 text-white shadow hover:bg-emerald-800 transition inline-block">Merger PDF</a>
-                <a href="/compress-pdf.html" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-block">Kompres PDF</a>
+                <div class="relative" data-dropdown>
+                    <button type="button" class="py-2 px-4 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition inline-flex items-center gap-2" data-dropdown-toggle="tools-menu-merge">
+                        <span>Tools PDF</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="tools-menu-merge" class="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white shadow-lg py-2 hidden">
+                        <a href="/merge-pdf.html" class="block px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-50">Merger PDF</a>
+                        <a href="/compress-pdf.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">Kompres PDF</a>
+                        <a href="/split-pdf.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">Split PDF</a>
+                    </div>
+                </div>
             </div>
             <button class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:text-emerald-700 transition" aria-label="Toggle menu" data-menu-toggle="nav-merge-menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,6 +73,7 @@
             <a href="/surat-lamaran.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Surat Lamaran</a>
             <a href="/merge-pdf.html" class="block px-2 py-2 rounded-lg bg-emerald-700 text-white font-semibold shadow hover:bg-emerald-800 transition">Merger PDF</a>
             <a href="/compress-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Kompres PDF</a>
+            <a href="/split-pdf.html" class="block px-2 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50">Split PDF</a>
         </div>
     </nav>
 
@@ -166,6 +178,23 @@
                 const menu = document.getElementById(targetId);
                 if (!menu) return;
                 menu.classList.toggle('hidden');
+            });
+        });
+        document.querySelectorAll('[data-dropdown-toggle]').forEach((btn) => {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const targetId = btn.getAttribute('data-dropdown-toggle');
+                const menu = document.getElementById(targetId);
+                if (!menu) return;
+                menu.classList.toggle('hidden');
+            });
+        });
+        document.addEventListener('click', () => {
+            document.querySelectorAll('[data-dropdown]').forEach((wrapper) => {
+                const menu = wrapper.querySelector('div[id]');
+                if (menu && !menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                }
             });
         });
 
