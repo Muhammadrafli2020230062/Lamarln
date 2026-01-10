@@ -29,6 +29,9 @@
                 padding: 40px 60px !important;
                 margin: 0 !important;
             }
+            #printable-area.compact-lampiran {
+                padding: 32px 52px !important;
+            }
             .no-print { display: none !important; }
         }
         .donate-overlay {
@@ -65,6 +68,39 @@
             padding: 6px 10px;
             border-radius: 9999px;
             border: 1px solid #fecdd3;
+        }
+        .signature-gap {
+            margin-top: 5.5rem;
+        }
+        #printable-area.compact-lampiran {
+            font-size: 14px;
+            line-height: 1.4;
+            padding-top: 32px;
+            padding-bottom: 32px;
+        }
+        #printable-area.compact-lampiran .compact-mb-12 {
+            margin-bottom: 1.75rem;
+        }
+        #printable-area.compact-lampiran .compact-mb-10 {
+            margin-bottom: 1.5rem;
+        }
+        #printable-area.compact-lampiran .compact-mb-8 {
+            margin-bottom: 1.25rem;
+        }
+        #printable-area.compact-lampiran .compact-mb-16 {
+            margin-bottom: 2.5rem;
+        }
+        #printable-area.compact-lampiran #pv-lampiran {
+            font-size: 13px;
+        }
+        #printable-area.compact-lampiran #pv-lampiran > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 0.125rem;
+        }
+        #printable-area.compact-lampiran #pv-data-diri > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 0.125rem;
+        }
+        #printable-area.compact-lampiran .signature-gap {
+            margin-top: 4rem;
         }
     </style>
 </head>
@@ -234,40 +270,40 @@
             <!-- Preview -->
             <div class="sticky top-8">
                 <div class="bg-white px-10 md:px-12 py-8 md:py-10 shadow-2xl rounded-sm border border-slate-100 overflow-y-auto relative text-[15px]" id="printable-area">
-                    <div class="text-right mb-12 text-slate-900">
+                    <div class="text-right mb-12 text-slate-900 compact-mb-12">
                         <p id="pv-kota-tanggal"></p>
                     </div>
 
-                    <div class="mb-10 text-slate-900">
+                    <div class="mb-10 text-slate-900 compact-mb-10">
                         <p class="font-bold">Perihal: Lamaran Pekerjaan</p>
                     </div>
 
-                    <div class="mb-12 text-slate-900 leading-snug">
+                    <div class="mb-12 text-slate-900 leading-snug compact-mb-12">
                         <p>Kepada Yth,</p>
                         <p class="font-bold" id="pv-penerima"></p>
                         <p class="font-bold uppercase" id="pv-perusahaan"></p>
                         <p class="max-w-[300px] mt-1" id="pv-alamat-perusahaan"></p>
                     </div>
 
-                    <div class="mb-8 leading-relaxed text-slate-900">
+                    <div class="mb-8 leading-relaxed text-slate-900 compact-mb-8">
                         <p class="mb-4">Dengan hormat,</p>
                         <p id="pv-paragraf1" style="text-align: justify;"></p>
                     </div>
 
-                    <div class="mb-10 ml-6 space-y-1 text-slate-900" id="pv-data-diri"></div>
+                    <div class="mb-10 ml-6 space-y-1 text-slate-900 compact-mb-10" id="pv-data-diri"></div>
 
-                    <div class="mb-10 leading-relaxed text-slate-900">
+                    <div class="mb-10 leading-relaxed text-slate-900 compact-mb-10">
                         <p class="mb-4">Bermaksud untuk melamar posisi tersebut di atas. Sebagai bahan pertimbangan Bapak/Ibu, saya lampirkan dokumen pendukung sebagai berikut:</p>
                         <div class="ml-8 space-y-1" id="pv-lampiran"></div>
                     </div>
 
-                    <div class="mb-10 leading-relaxed text-slate-900">
+                    <div class="mb-10 leading-relaxed text-slate-900 compact-mb-10">
                         <p>Demikian surat lamaran ini saya sampaikan, besar harapan saya untuk dapat mengikuti tahapan selanjutnya. Atas perhatian Bapak/Ibu, saya ucapkan terima kasih.</p>
                     </div>
 
-                    <div class="flex justify-end pr-8 text-slate-900">
+                    <div class="flex justify-end pr-8 text-slate-900 signature-gap">
                         <div class="text-center min-w-[200px]">
-                            <p class="mb-16">Hormat saya,</p>
+                            <p class="mb-[5rem] compact-mb-16">Hormat saya,</p>
                             <p class="font-bold border-b border-slate-900 pb-1 uppercase" id="pv-nama-tanda-tangan"></p>
                         </div>
                     </div>
@@ -433,6 +469,11 @@
                 .join('');
 
             document.getElementById('pv-nama-tanda-tangan').textContent = state.namaLengkap || '';
+            const printableArea = document.getElementById('printable-area');
+            if (printableArea) {
+                printableArea.classList.toggle('compact-lampiran', state.lampiran.length > 5);
+            }
+
         }
 
         function setupDonationModal() {
