@@ -180,7 +180,7 @@
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-sm font-semibold text-slate-700">Tanggal Surat</label>
-                                <input data-field="tanggalSurat" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                                <input data-field="tanggalSurat" data-date-input type="date" inputmode="none" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
                             </div>
                         </div>
                     </section>
@@ -244,7 +244,7 @@
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-semibold text-slate-700">Tanggal Lahir</label>
-                                    <input data-field="tanggalLahir" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Tgl bln thn" />
+                                    <input data-field="tanggalLahir" data-date-input type="date" inputmode="none" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none" />
                                 </div>
                             </div>
                             <div class="space-y-1.5">
@@ -315,7 +315,7 @@
     <script>
         const state = {
             kotaAsal: 'Karawang',
-            tanggalSurat: '12 Oktober 2022',
+            tanggalSurat: '2022-10-12',
             perusahaan: 'PT. Angin Mamiri',
             penerima: 'HRD Manager',
             alamatPerusahaan: 'Jl. Kaktus 30 No. 1, Karawang Barat',
@@ -324,16 +324,23 @@
             namaLengkap: 'Mamaris',
             jenisKelamin: 'Laki-laki',
             tempatLahir: 'Samarinda',
-            tanggalLahir: '23 November 1990',
+            tanggalLahir: '1990-11-23',
             alamat: 'Jl. Pepaya No. 27, Karawang Barat',
             nomorHandphone: '086575647367',
             lampiran: ['Fotokopi KTP', 'Fotokopi Ijazah', 'Fotokopi SKCK', 'Pas foto 3x4']
         };
 
+        const dateFormatter = new Intl.DateTimeFormat('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+
         let donationResolve = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             bindInputs();
+            setupDateInputs();
             renderLampiran();
             renderPreview();
             setupDonationModal();
@@ -366,6 +373,34 @@
             document.getElementById('btn-print').addEventListener('click', handlePrint);
             document.getElementById('add-lampiran').addEventListener('click', addLampiran);
         });
+
+        function parseDateOnly(value) {
+            if (!value) return null;
+            const parts = value.split('-').map(Number);
+            if (parts.length !== 3) return null;
+            const [year, month, day] = parts;
+            if (!year || !month || !day) return null;
+            return new Date(year, month - 1, day);
+        }
+
+        function formatTanggal(value) {
+            const date = parseDateOnly(value);
+            return date ? dateFormatter.format(date) : '-';
+        }
+
+        function setupDateInputs() {
+            const dateInputs = document.querySelectorAll('[data-date-input]');
+            if (!dateInputs.length) return;
+            const allowedKeys = new Set(['Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
+            dateInputs.forEach((input) => {
+                input.addEventListener('keydown', (event) => {
+                    if (allowedKeys.has(event.key)) return;
+                    event.preventDefault();
+                });
+                input.addEventListener('paste', (event) => event.preventDefault());
+                input.addEventListener('drop', (event) => event.preventDefault());
+            });
+        }
 
         async function handlePrint() {
             const donateUrl = 'https://trakteer.id/muhrafli13/tip';
@@ -439,7 +474,9 @@
         }
 
         function renderPreview() {
-            document.getElementById('pv-kota-tanggal').textContent = `${state.kotaAsal}, ${state.tanggalSurat}`;
+            const tanggalSuratLabel = formatTanggal(state.tanggalSurat);
+            const tanggalLahirLabel = formatTanggal(state.tanggalLahir);
+            document.getElementById('pv-kota-tanggal').textContent = `${state.kotaAsal || '-'}, ${tanggalSuratLabel}`;
             document.getElementById('pv-penerima').textContent = state.penerima || '-';
             document.getElementById('pv-perusahaan').textContent = state.perusahaan || '-';
             document.getElementById('pv-alamat-perusahaan').textContent = state.alamatPerusahaan || '-';
@@ -451,7 +488,7 @@
             const dataDiri = [
                 ['Nama Lengkap', state.namaLengkap || '-'],
                 ['Jenis Kelamin', state.jenisKelamin || '-'],
-                ['Tempat/Tgl Lahir', `${state.tempatLahir || '-'}, ${state.tanggalLahir || '-'}`],
+                ['Tempat/Tgl Lahir', `${state.tempatLahir || '-'}, ${tanggalLahirLabel}`],
                 ['Alamat Domisili', state.alamat || '-'],
                 ['Nomor handphone', state.nomorHandphone || '-']
             ];
